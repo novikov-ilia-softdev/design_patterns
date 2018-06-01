@@ -1,0 +1,5 @@
+*.out
+*.o
+.cproject
+.project
+main
