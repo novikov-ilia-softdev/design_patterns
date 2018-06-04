@@ -1,28 +1,21 @@
-// Паттерн "Bridge"
-
 #include <iostream>
-using namespace std;
 
-// Абстрактная реализация
 class Implementor {
 public:
-	virtual void OperationImpl() = 0;
+	virtual void operationImpl() = 0;
 	virtual ~Implementor() {}
 };
 
-// Конкретная реализация A
 class ConcreteImplementorA: public Implementor {
 public:
-	void OperationImpl() { cout << "ConcreteImplementorA" << endl; }
+	void operationImpl() { std::cout << "ConcreteImplementorA" << std::endl; }
 };
 
-// Конкретная реализация B
 class ConcreteImplementorB: public Implementor {
 public:
-	void OperationImpl() { cout << "ConcreteImplementorB" << endl; }
+	void operationImpl() { std::cout << "ConcreteImplementorB" << std::endl; }
 };
 
-// Абстрактная абстракция
 class Abstraction {
 protected:
 	Implementor* pimpl;
@@ -30,33 +23,28 @@ protected:
 public:
 	Implementor* get() const { return pimpl; }
 	void set(Implementor* p) { pimpl = p; }
-	virtual void Operation() = 0;
+	virtual void operation() = 0;
 	virtual ~Abstraction() {}
 };
 
-// Уточненная абстракция
 class RefineAbstraction: public Abstraction {
 public:
-	void Operation() { pimpl->OperationImpl(); }
+	void operation() { pimpl->operationImpl(); }
 };
 
 int main()
 {
 	Abstraction* ab = new RefineAbstraction;
 
-	// Устанавливаем реализацию и вызываем
 	Implementor* pimplA = new ConcreteImplementorA;
-	ab->set(pimplA);
-	ab->Operation();
+	ab->set( pimplA);
+	ab->operation();
 	delete pimplA;
 
-	// Меняем реализацию и вызываем
 	Implementor* pimplB = new ConcreteImplementorB;
-	ab->set(pimplB);
-	ab->Operation();
+	ab->set( pimplB);
+	ab->operation();
 	delete pimplB;
 
 	delete ab;
-
-	system("pause");
 }
