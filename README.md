@@ -1,1 +1,1 @@
-# design_patterns
+# design patterns by Gang of Four
