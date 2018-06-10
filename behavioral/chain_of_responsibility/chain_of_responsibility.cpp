@@ -3,7 +3,8 @@
 class IChainOfResponsibility{
 public:
 	virtual void process( int i) = 0;
-	void setNext( IChainOfResponsibility* next){ next_ = next; } 
+	void setNext( IChainOfResponsibility* next){ next_ = next; }
+	virtual ~IChainOfResponsibility() {}
 	
 protected:
 	IChainOfResponsibility* next_;
@@ -54,4 +55,8 @@ int main()
 	chain->process( 1);
 	chain->process( -1);
 	chain->process( 0);
+	
+	delete chain;
+	delete second;
+	delete third;
 }
