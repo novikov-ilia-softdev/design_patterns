@@ -18,8 +18,8 @@ private:
 
 class SupervisedString: public ISubject {
 public:
-	virtual void add( IObserver& ref ){ observers_.push_back( item( &ref ) );}
-	virtual void remove( IObserver& ref )
+	void add( IObserver& ref ){ observers_.push_back( item( &ref ) );}
+	void remove( IObserver& ref )
 	{
 		std::vector<IObserver*>::iterator it;
 		bool bFound = false;
@@ -42,7 +42,7 @@ private:
 	std::string str_;
 	std::vector<IObserver*> observers_;
 	typedef std::vector<IObserver*>::value_type item;
-	virtual void notify_()
+	void notify_()
 	{
 		std::vector<IObserver*>::iterator it;
 		for ( it = observers_.begin(); it != observers_.end(); it++ )
