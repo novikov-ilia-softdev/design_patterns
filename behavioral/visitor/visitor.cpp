@@ -1,76 +1,63 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
 
-class ConcreteElementA;
-class ConcreteElementB;
-
-class IVisitor {
+class IColor{
 public:
-	virtual void visitConcreteElementA( ConcreteElementA* pA ) = 0;
-	virtual void visitConcreteElementB( ConcreteElementB* pB ) = 0;
-	virtual ~IVisitor() {}
+    virtual void accept( class IVisitor*) = 0;
+    virtual ~IColor() {}
 };
 
-class ConcreteVisitor1: public IVisitor {
+class Red: public IColor{
 public:
-	void visitConcreteElementA( ConcreteElementA* pA ){ std::cout << "ConcreteVisitor1::visitConcreteElementA" << std::endl; }
-	void visitConcreteElementB( ConcreteElementB* pB ){ std::cout << "ConcreteVisitor1::visitConcreteElementB" << std::endl; }
+    void accept( IVisitor*);
+    void eye(){ std::cout << "Red::eye" << std::endl;}
 };
 
-class ConcreteVisitor2: public IVisitor {
+class Blu: public IColor{
 public:
-	void visitConcreteElementA( ConcreteElementA* pA ){ std::cout << "ConcreteVisitor2::visitConcreteElementA" << std::endl; }
-	void visitConcreteElementB( ConcreteElementB* pB ){ std::cout << "ConcreteVisitor2::visitConcreteElementB" << std::endl; }
+    void accept( IVisitor*);
+    void sky(){ std::cout << "Blu::sky" << std::endl;}
 };
 
-class IElement {
+class IVisitor{
 public:
-	virtual void accept( IVisitor* pV ) = 0;
-	virtual ~IElement() {}
+    virtual void visit( Red*) = 0;
+    virtual void visit( Blu*) = 0;
+    virtual ~IVisitor() {}
 };
 
-class ConcreteElementA: public IElement {
+class CountVisitor: public IVisitor{
 public:
-	void accept( IVisitor* pV ){ pV->visitConcreteElementA( this ); }
-	void operationA() { std::cout << "ConcreteElementA::operationA" << std::endl; }
+    CountVisitor(): numRed_( 0), numBlu_( 0) {}
+    void visit( Red*){ ++numRed_; }
+    void visit( Blu*){ ++numBlu_; }
+    void reportNum(){ std::cout << "Reds " << numRed_ << ", Blus " << numBlu_ << std::endl; }
+private:
+    int numRed_, numBlu_;
 };
 
-class ConcreteElementB: public IElement {
+class CallVisitor: public IVisitor{
 public:
-	void accept( IVisitor* pV ){ pV->visitConcreteElementB( this );}
-	void operationB() { std::cout << "ConcreteElementA::operationB" << std::endl; }
+    void visit( Red *r){ r->eye(); }
+    void visit( Blu *b){ b->sky(); }
 };
 
-class GarbageColector {
-public:
-	static void freeMemory(IElement* in){ delete in; }
-};
+void Red::accept( IVisitor *v){ v->visit( this); }
+void Blu::accept( IVisitor *v){ v->visit( this); }
 
-int main( int argc, char* argv[] )
+int main()
 {
-	std::vector<IElement*> elements;
-	IElement* pA = new ConcreteElementA;
-	IElement* pB = new ConcreteElementB;
-	elements.push_back( pA );
-	elements.push_back( pB );
-
-	IVisitor* v1 = new ConcreteVisitor1;
-	
-	std::vector<IElement*>::iterator it;
-	for ( it = elements.begin(); it != elements.end(); it++ )
+	IColor *set[] = { new Red, new Blu, new Blu, new Red, new Red, 0};
+	CountVisitor countOperation;
+	CallVisitor callOperation;
+	for( int i = 0; set[i]; i++)
 	{
-		(*it)->accept( v1 );
+		set[i]->accept( &countOperation);
+		set[i]->accept( &callOperation);
 	}
+	countOperation.reportNum();
 
-	IVisitor* v2 = new ConcreteVisitor2;
-	for ( int i = 0; i < elements.size(); i++ )
+	for( int i = 0; set[i]; i++)
 	{
-		elements[i]->accept( v2 );
+		delete set[i];
 	}
-
-	delete v1;
-	delete v2;
-	for_each( elements.begin(), elements.end(), GarbageColector::freeMemory);
-	elements.clear();
 }
